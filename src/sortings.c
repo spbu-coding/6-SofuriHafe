@@ -106,7 +106,7 @@ void radix(strings_array_t array, array_size_t size, comparator_func_t cmp) // i
 
 		for (unsigned int j = 0; j < size; j++)
 		{
-			if ((int)strs_len[j] - 1 >= i) char_counter[array[j][i]]++;
+			if ((int)strs_len[j] - 1 >= i) char_counter[(unsigned int)array[j][i]]++;
 
 			else char_counter[0]++;
 		}
