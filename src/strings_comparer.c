@@ -113,13 +113,13 @@ int main(int argc, char* argv[])
 
 	if (strings_array != NULL)
 	{
-		for(int i = 0; i < input_argc.size; i++)
+		for(unsigned int i = 0; i < input_argc.size; i++)
 		{
 			strings_array[i] = (char*)malloc(sizeof(char) * MAX_INPUT_STRING_SIZE);
 
 			if(strings_array[i] == NULL)
 			{
-				for (int j = 0; j < input_argc.size; j++) free(strings_array[j]);
+				for (unsigned int j = 0; j < input_argc.size; j++) free(strings_array[j]);
 
 				free(strings_array);
 
@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
 	{
 		fclose(input_file);
 
-		for(int i = 0; i <input_argc.size; i++) free(strings_array[i]);
+		for(unsigned int i = 0; i < input_argc.size; i++) free(strings_array[i]);
 
 		free(strings_array);
 
@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	for (int i = 0; i < input_argc.size; i++)
+	for (unsigned int i = 0; i < input_argc.size; i++)
 	{
 		if (fputs(strings_array[i], output_file) != EOF)
 		{
@@ -204,8 +204,8 @@ int main(int argc, char* argv[])
 	fclose(input_file);
 
 	fclose(output_file);
-
-	for(int i = 0; i < input_argc.size; i++) free(strings_array[i]);
+ 
+	for(unsigned int i = 0; i < input_argc.size; i++) free(strings_array[i]);
 
 	free(strings_array);
 
