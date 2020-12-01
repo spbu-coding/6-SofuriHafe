@@ -11,9 +11,9 @@ void swap(char **str1, char **str2)
 
 void bubble(strings_array_t array, array_size_t size, comparator_func_t cmp)
 {
-	for(int i = 0; i < size - 1; i++)
+	for(unsigned int i = 0; i < size - 1; i++)
 	{
-		for(int j = 0; j < size - 1; j++)
+		for(unsigned int j = 0; j < size - 1; j++)
 		{
 			if(cmp(array[j], array[j + 1]) > 0) swap(&array[j], &array[j + 1]);
 		}
@@ -22,9 +22,9 @@ void bubble(strings_array_t array, array_size_t size, comparator_func_t cmp)
 
 void insertion(strings_array_t array, array_size_t size, comparator_func_t cmp)
 {
-	for(int i = 1; i < size; i++)
+	for(unsigned int i = 1; i < size; i++)
 	{
-		for(int j = i; j > 0; j--)
+		for(unsigned int j = i; j > 0; j--)
 		{
 			if(cmp(array[j - 1], array[j]) > 0) swap(&array[j - 1], &array[j]);
 		}
@@ -33,15 +33,15 @@ void insertion(strings_array_t array, array_size_t size, comparator_func_t cmp)
 
 void merge(strings_array_t array, array_size_t size, comparator_func_t cmp)
 {
-	for (int parts_num = size; parts_num > 1; parts_num = 1 + (parts_num - 1) / 2)
+	for (unsigned int parts_num = size; parts_num > 1; parts_num = 1 + (parts_num - 1) / 2)
 	{
-		int part_len = 1 + (size - 1) / parts_num;
+		unsigned int part_len = 1 + (size - 1) / parts_num;
 
-		for (int i = 0; i < parts_num - 1; i += 2)
+		for (unsigned int i = 0; i < parts_num - 1; i += 2)
 		{
-			int len1 = part_len, len2 = (((i + 2) * part_len) <= size) ? part_len : (size - (i + 1) * part_len), buf_len = len1 + len2;
+			unsigned int len1 = part_len, len2 = (((i + 2) * part_len) <= size) ? part_len : (size - (i + 1) * part_len), buf_len = len1 + len2;
 
-			int ind1 = i * part_len, ind2 = (i + 1) * part_len;
+			unsigned int ind1 = i * part_len, ind2 = (i + 1) * part_len;
 
 			char* buf[buf_len];
 
@@ -63,9 +63,9 @@ void merge(strings_array_t array, array_size_t size, comparator_func_t cmp)
 
 void quick(strings_array_t array, array_size_t size, comparator_func_t cmp)
 {
-	int left = 0;
-	int right = size - 1;
-	int middle = size / 2;
+	unsigned int left = 0;
+	unsigned int right = size - 1;
+	unsigned int middle = size / 2;
 
 	do
 	{
@@ -87,33 +87,33 @@ void quick(strings_array_t array, array_size_t size, comparator_func_t cmp)
 	if (left < size) quick(array + left, size - left, cmp);
 }
 
-void radix(strings_array_t array, array_size_t size, comparator_func_t cmp)
+void radix(strings_array_t array, array_size_t size, comparator_func_t cmp) // inspired by TimPushkin
 {
 	const _Bool is_asc_order = (cmp("a", "b") < 0);
 
 	int strs_len[size], max_str_len = 0;
 
-	for (int i = 0; i < size; i++)
+	for (unsigned int i = 0; i < size; i++)
 	{
 		strs_len[i] = strlen(array[i]) - 1;
 
 		if (strs_len[i] > max_str_len) max_str_len = strs_len[i];
 	}
 
-	for (int i = (int) max_str_len - 1; i >= 0; i--)
+	for (int i = (int)max_str_len - 1; i >= 0; i--)
 	{
-		int char_counter[ASCII_LENGTH] = {0};
+		unsigned int char_counter[ASCII_LENGTH] = {0};
 
-		for (int j = 0; j < size; j++)
+		for (unsigned int j = 0; j < size; j++)
 		{
-			if (strs_len[j] - 1 >= i) char_counter[array[j][i]]++;
+			if ((int)strs_len[j] - 1 >= i) char_counter[array[j][i]]++;
 
 			else char_counter[0]++;
 		}
 
 		if (is_asc_order)
 		{
-			for (int j = 1; j < ASCII_LENGTH; j++) char_counter[j] += char_counter[j - 1];
+			for (unsigned int j = 1; j < ASCII_LENGTH; j++) char_counter[j] += char_counter[j - 1];
 		}
 
 		else
@@ -125,12 +125,12 @@ void radix(strings_array_t array, array_size_t size, comparator_func_t cmp)
 
 		int buf_l[size];
 
-		for (int j = size - 1; j >= 0; j--)
+		for (int j = (int)size - 1; j >= 0; j--)
 		{
-			if (strs_len[j] - 1 >= i)
+			if ((int)strs_len[j] - 1 >= i)
 			{
-				buf[(char_counter[array[j][i]]) - 1] = array[j];
-				buf_l[(char_counter[array[j][i]]--) - 1] = strs_len[j];
+				buf[(char_counter[(unsigned int)array[j][i]]) - 1] = array[j];
+				buf_l[(char_counter[(unsigned int)array[j][i]]--) - 1] = strs_len[j];
 			}
 
 			else
