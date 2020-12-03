@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "sortings.h"
 
 typedef void (*sort_type_t)(strings_array_t, array_size_t, comparator_func_t);
@@ -25,9 +24,11 @@ int get_args(int argc, char* argv[], struct arguments* input_argc)
 		return -1;
 	}
 
-	if (strtoul(argv[1], NULL, 10) == 0)
+	char *p = NULL;
+	const char *size_pointer = argv[1];
+	if (strtoul(argv[1], &p, 10) < 0 || size_pointer == p)
 	{
-		printf("There can't be 0 lines (first arg)");
+		printf("There can't be less than 0 lines (first arg)");
 
 		return -1;
 	}
@@ -79,13 +80,13 @@ int get_args(int argc, char* argv[], struct arguments* input_argc)
 	return 0;
 }
 
-int read_file(FILE* input_file, struct arguments* option, strings_array_t strings_array)
+int read_file(FILE* input_file, struct arguments* option, strings_array_t array)
 {
 	for (size_t i = 0; i < option->size; i++)
 	{
 		if (!feof(input_file))
 		{
-			if (fgets(strings_array[i], MAX_INPUT_STRING_SIZE, input_file) == NULL)
+			if (fgets(array[i], MAX_INPUT_STRING_SIZE, input_file) == NULL)
 			{
 				printf("Failed getting values");
 
@@ -107,23 +108,23 @@ int read_file(FILE* input_file, struct arguments* option, strings_array_t string
 int main(int argc, char* argv[])
 {
 	struct arguments input_argc;
-	if (get_args(argc, argv, &input_argc ) < 0) return -1;
+	if (get_args(argc, argv, &input_argc) < 0) return -1;
 
-	strings_array_t strings_array = (char**)malloc(sizeof(char*) * input_argc.size);
+	strings_array_t array = (char**)malloc(sizeof(char*) * input_argc.size);
 
-	if (strings_array != NULL)
+	if (array != NULL)
 	{
-		for(unsigned int i = 0; i < input_argc.size; i++)
+		for(size_t i = 0; i < input_argc.size; i++)
 		{
-			strings_array[i] = (char*)malloc(sizeof(char) * MAX_INPUT_STRING_SIZE);
+			array[i] = (char*)malloc(sizeof(char) * MAX_INPUT_STRING_SIZE);
 
-			if(strings_array[i] == NULL)
+			if(array[i] == NULL)
 			{
-				for (unsigned int j = 0; j < input_argc.size; j++) free(strings_array[j]);
+				for (size_t j = 0; j < input_argc.size; j++) free(array[j]);
 
-				free(strings_array);
+				free(array);
 
-				strings_array = NULL;
+				array = NULL;
 
 				printf("Unable to allocate memory\n");
 				return -1;
@@ -131,7 +132,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	else if (strings_array == NULL)
+	else if (array == NULL)
 	{
 		printf("Unable to allocate memory\n");
 
@@ -142,24 +143,31 @@ int main(int argc, char* argv[])
 
 	if (input_file == NULL)
 	{
-		for(size_t i = 0; i <input_argc.size; i++) free(strings_array[i]);
-		free(strings_array);
+		for(size_t i = 0; i < input_argc.size; i++) free(array[i]);
+		free(array);
 
-		strings_array = NULL;
+		array = NULL;
 
 		printf("Unable to open file\n");
 
 		return -1;
 	}
 
-	if (read_file(input_file, &input_argc, strings_array) < 0)
+	if (read_file(input_file, &input_argc, array) < 0)
 	{
 		fclose(input_file);
+
+		for(size_t i = 0; i < input_argc.size; i++) free(array[i]);
+
+		free(array);
+		array = NULL;
+
+		printf("Unable to read file\n");
 
 		return -1;
 	}
 
-	input_argc.sort_type(strings_array, input_argc.size, input_argc.cmp);
+	if(input_argc.size > 0) input_argc.sort_type(array, input_argc.size, input_argc.cmp);
 
 	FILE* output_file = fopen(argv[3], "w");
 
@@ -167,49 +175,62 @@ int main(int argc, char* argv[])
 	{
 		fclose(input_file);
 
-		for(unsigned int i = 0; i < input_argc.size; i++) free(strings_array[i]);
+		for(size_t i = 0; i < input_argc.size; i++) free(array[i]);
 
-		free(strings_array);
+		free(array);
 
-		strings_array = NULL;
+		array = NULL;
 
 		printf("Ouput file is missing or Unable to open\n");
 
 		return -1;
 	}
 
-	for (unsigned int i = 0; i < input_argc.size; i++)
+	if(input_argc.size == 0)
 	{
-		if (fputs(strings_array[i], output_file) != EOF)
+		if(fputs("\n", output_file) == EOF)
 		{
-			if(strcspn(strings_array[i], "\n") == strlen(strings_array[i]))
-			{
-				if (fputs("\n", output_file) == EOF)
-				{
-					printf("Unable to write to file\n");
-
-					return -1;
-				}
-			}
-		}
-
-		else
-		{
-			printf("Unable to wirte to file");
+			printf("Unable to write to file");
 
 			return -1;
 		}
 	}
 
+	else
+	{
+		for(size_t i = 0; i < input_argc.size; i++)
+		{
+			if(fputs(array[i], output_file) != EOF)
+			{
+				if(strcspn(array[i], "\n") == strlen(array[i]))
+				{
+					if(fputs("\n", output_file) == EOF)
+					{
+						printf("Unable to write to file\n");
+
+						return -1;
+					}
+				}
+			}
+
+			else
+			{
+				printf("Unable to write to file");
+
+				return -1;
+			}
+		}
+	}
+	
 	fclose(input_file);
 
 	fclose(output_file);
  
-	for(unsigned int i = 0; i < input_argc.size; i++) free(strings_array[i]);
+	for(size_t i = 0; i < input_argc.size; i++) free(array[i]);
 
-	free(strings_array);
+	free(array);
 
-	strings_array = NULL;
+	array = NULL;
 
 	return 0;
 }
