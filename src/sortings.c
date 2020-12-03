@@ -41,17 +41,17 @@ void merge_part2(strings_array_t array, int left, int middle, int right, compara
 
 	char *lbuff[lsize], *rbuff[rsize];
 
-	for (int i = 0; i < lsize; i++) lbuff[i] = array[left + i];
+	for(int i = 0; i < lsize; i++) lbuff[i] = array[left + i];
 
-	for (int j = 0; j < rsize; j++) rbuff[j] = array[middle + 1 + j];
+	for(int j = 0; j < rsize; j++) rbuff[j] = array[middle + 1 + j];
 
 	int i = 0;
 	int j = 0;
 	int k = left;
 
-	while (i < lsize && j < rsize)
+	while(i < lsize && j < rsize)
 	{
-		if (cmp(lbuff[i], rbuff[j]) < 0)
+		if(cmp(lbuff[i], rbuff[j]) < 0)
 		{
 			array[k] = lbuff[i];
 			i++;
@@ -66,14 +66,14 @@ void merge_part2(strings_array_t array, int left, int middle, int right, compara
 		k++;
 	}
 
-	while (i < lsize)
+	while(i < lsize)
 	{
 		array[k] = lbuff[i];
 		i++;
 		k++;
 	}
 
-	while (j < rsize)
+	while(j < rsize)
 	{
 		array[k] = rbuff[j];
 		j++;
@@ -83,7 +83,7 @@ void merge_part2(strings_array_t array, int left, int middle, int right, compara
 
 void merge_part1(strings_array_t array, int left, int right, comparator_func_t cmp)
 {
-    if (left >= right) return;
+    if(left >= right) return;
 
     int middle = (left + right - 1) / 2;
 
@@ -102,9 +102,9 @@ int quick_part2(strings_array_t array, int left, int right, comparator_func_t cm
 	char *p = array[right];
 	int i = (left - 1);
 
-	for (int j = left; j <= right - 1; j++)
+	for(int j = left; j <= right - 1; j++)
 	{
-		if (cmp(array[j], p) < 0)
+		if(cmp(array[j], p) < 0)
 		{
 			i++;
 
@@ -119,7 +119,7 @@ int quick_part2(strings_array_t array, int left, int right, comparator_func_t cm
 
 void quick_part1(strings_array_t array, int left, int right, comparator_func_t cmp)
 {
-	if (left < right)
+	if(left < right)
 	{
 		int middle = quick_part2(array, left, right, cmp);
 		quick_part1(array, left, middle - 1, cmp);
@@ -138,29 +138,29 @@ void radix(strings_array_t array, array_size_t size, comparator_func_t cmp)
 
 	array_size_t max_length = 0;
 
-	for (size_t i = 0; i < size; i++)
+	for(size_t i = 0; i < size; i++)
 	{
 		array_size_t length = strlen(array[i]);
 
-		if (max_length < length) max_length = length;
+		if(max_length < length) max_length = length;
 	}
 
-	if (max_length == 0) return;
+	if(max_length == 0) return;
 
 	size_t buff[CHAR_SET];
 	strings_array_t tmp = (strings_array_t)(malloc(size * sizeof(char *)));
 
-	for (size_t i = max_length; i > 0; i--)
+	for(size_t i = max_length; i > 0; i--)
 	{
 		size_t counter = 0;
 
-		for (size_t j = 0; j < CHAR_SET; j++) buff[j] = 0;
+		for(size_t j = 0; j < CHAR_SET; j++) buff[j] = 0;
 
-		for (size_t j = 0; j < size; j++) buff[(unsigned char)(array[j][i - 1])]++;
+		for(size_t j = 0; j < size; j++) buff[(unsigned char)(array[j][i - 1])]++;
 
-		if (is_asc)
+		if(is_asc)
 		{
-			for (size_t j = 0; j < CHAR_SET; j++)
+			for(size_t j = 0; j < CHAR_SET; j++)
 			{
 				size_t value = buff[j];
 				buff[j] = counter;
@@ -170,7 +170,7 @@ void radix(strings_array_t array, array_size_t size, comparator_func_t cmp)
 
 		else
 		{
-			for (size_t j = CHAR_SET; j > 0; j--)
+			for(size_t j = CHAR_SET; j > 0; j--)
 			{
 				size_t value = buff[j - 1];
 				buff[j - 1] = counter;
@@ -178,13 +178,13 @@ void radix(strings_array_t array, array_size_t size, comparator_func_t cmp)
 			}
 		}
 
-		for (size_t j = 0; j < size; j++)
+		for(size_t j = 0; j < size; j++)
 		{
 			tmp[buff[(unsigned char)array[j][i - 1]]] = array[j];
 			buff[(unsigned char)array[j][i - 1]]++;
 		}
 
-		for (size_t j = 0; j < size; j++) array[j] = tmp[j];
+		for(size_t j = 0; j < size; j++) array[j] = tmp[j];
 	}
 
 	free(tmp);
