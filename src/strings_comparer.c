@@ -17,47 +17,47 @@ int des(const char* str1, const char* str2) {return -strcmp(str1, str2);}
 
 int get_args(int argc, char* argv[], struct arguments* input_argc)
 {
-	if (argc != 6)
+	if(argc != 6)
 	{
-		printf("Five args are required");
+		printf("Five arguments are required");
 
 		return -1;
 	}
 
 	char *p = NULL;
 	const char *size_pointer = argv[1];
-	if (strtoul(argv[1], &p, 10) < 0 || size_pointer == p)
+	if(strtol(argv[1], &p, 10) < 0 || size_pointer == p)
 	{
-		printf("There can't be less than 0 lines (first arg)");
+		printf("Weird argument");
 
 		return -1;
 	}
 
 	else input_argc->size = strtoul(argv[1], NULL, 10);
 
-	if (strstr(argv[2], ".txt") == NULL)
+	if(strstr(argv[2], ".txt") == NULL)
 	{
 		printf("!.txt files only!");
 
 		return -1;
 	}
 
-	if (strstr(argv[3], ".txt") == NULL)
+	if(strstr(argv[3], ".txt") == NULL)
 	{
 		printf("!.txt files only!");
 
 		return -1;
 	}
 
-	if (strcmp(argv[4], "bubble") == 0 ) input_argc->sort_type = bubble;
+	if(strcmp(argv[4], "bubble") == 0 ) input_argc->sort_type = bubble;
 
-	else if (strcmp(argv[4], "insertion") == 0 ) input_argc->sort_type = insertion;
+	else if(strcmp(argv[4], "insertion") == 0 ) input_argc->sort_type = insertion;
 
-	else if (strcmp(argv[4], "merge") == 0 ) input_argc->sort_type = merge;
+	else if(strcmp(argv[4], "merge") == 0 ) input_argc->sort_type = merge;
 
-	else if (strcmp(argv[4], "quick") == 0) input_argc->sort_type = quick;
+	else if(strcmp(argv[4], "quick") == 0) input_argc->sort_type = quick;
 
-	else if (strcmp(argv[4], "radix") == 0) input_argc->sort_type = radix;
+	else if(strcmp(argv[4], "radix") == 0) input_argc->sort_type = radix;
 
 	else
 	{
@@ -66,9 +66,9 @@ int get_args(int argc, char* argv[], struct arguments* input_argc)
 		return -1;
 	}
 
-	if (strcmp(argv[5], "asc") == 0) input_argc->cmp = asc;
+	if(strcmp(argv[5], "asc") == 0) input_argc->cmp = asc;
 
-	else if (strcmp(argv[5], "des") == 0) input_argc->cmp = des;
+	else if(strcmp(argv[5], "des") == 0) input_argc->cmp = des;
 
 	else
 	{
@@ -82,11 +82,11 @@ int get_args(int argc, char* argv[], struct arguments* input_argc)
 
 int read_file(FILE* input_file, struct arguments* option, strings_array_t array)
 {
-	for (size_t i = 0; i < option->size; i++)
+	for(size_t i = 0; i < option->size; i++)
 	{
-		if (!feof(input_file))
+		if(!feof(input_file))
 		{
-			if (fgets(array[i], MAX_INPUT_STRING_SIZE, input_file) == NULL)
+			if(fgets(array[i], MAX_INPUT_STRING_SIZE, input_file) == NULL)
 			{
 				printf("Failed getting values");
 
@@ -94,7 +94,7 @@ int read_file(FILE* input_file, struct arguments* option, strings_array_t array)
 			}
 		}
 
-		else if (feof(input_file) && i < option->size)
+		else if(feof(input_file) && i < option->size)
 		{
 			printf("Real strings number is less than requested");
 
@@ -108,11 +108,11 @@ int read_file(FILE* input_file, struct arguments* option, strings_array_t array)
 int main(int argc, char* argv[])
 {
 	struct arguments input_argc;
-	if (get_args(argc, argv, &input_argc) < 0) return -1;
+	if(get_args(argc, argv, &input_argc) < 0) return -1;
 
 	strings_array_t array = (char**)malloc(sizeof(char*) * input_argc.size);
 
-	if (array != NULL)
+	if(array != NULL)
 	{
 		for(size_t i = 0; i < input_argc.size; i++)
 		{
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
 
 			if(array[i] == NULL)
 			{
-				for (size_t j = 0; j < input_argc.size; j++) free(array[j]);
+				for(size_t j = 0; j < input_argc.size; j++) free(array[j]);
 
 				free(array);
 
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	else if (array == NULL)
+	else if(array == NULL)
 	{
 		printf("Unable to allocate memory\n");
 
@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
 
 	FILE *input_file = fopen(argv[2], "r");
 
-	if (input_file == NULL)
+	if(input_file == NULL)
 	{
 		for(size_t i = 0; i < input_argc.size; i++) free(array[i]);
 		free(array);
@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	if (read_file(input_file, &input_argc, array) < 0)
+	if(read_file(input_file, &input_argc, array) < 0)
 	{
 		fclose(input_file);
 
@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
 
 	FILE* output_file = fopen(argv[3], "w");
 
-	if (output_file == NULL)
+	if(output_file == NULL)
 	{
 		fclose(input_file);
 
